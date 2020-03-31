@@ -1,0 +1,140 @@
+{
+    "comments": "This service deletes a contact from the database and sets the APIs response.",
+    "input": [
+        {
+            "name": "contactId",
+            "required": true,
+            "allowNull": false
+        }
+    ],
+    "output": [
+        {
+            "name": "responseCode",
+            "type": "integer",
+            "defaultValue": 200
+        },
+        {
+            "name": "APIResponse",
+            "type": "model",
+            "reference": "io.toro.mock.contact.model.APIResponse"
+        }
+    ],
+    "steps": [
+        {
+            "type": "invokeGloop",
+            "name": "io.toro.mock.contact.api.controller.util.IsContactExisting",
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "isContactExisting",
+                            "type": "boolean"
+                        }
+                    ]
+                }
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "contactId"
+                    ],
+                    "to": [
+                        "id"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "value"
+                    ],
+                    "to": [
+                        "isContactExisting"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "fork",
+            "comments": "Is contact existing?",
+            "expression": "isContactExisting",
+            "children": [
+                {
+                    "type": "block",
+                    "label": "true",
+                    "comments": "If yes",
+                    "children": [
+                        {
+                            "type": "invokeGloop",
+                            "comments": "Delete contact",
+                            "name": "io.toro.mock.contact.sql.DeleteContact",
+                            "inputs": [
+                                {
+                                    "from": [
+                                        "contactId"
+                                    ],
+                                    "to": [
+                                        "deleteContactInput",
+                                        "id"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "comments": "Return a success message",
+                            "lines": [
+                                {
+                                    "type": "set",
+                                    "expression": "SUCCESS",
+                                    "to": [
+                                        "APIResponse",
+                                        "result"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "\"Successfully deleted contact.\"",
+                                    "evaluate": true,
+                                    "to": [
+                                        "APIResponse",
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "false",
+                    "comments": "Return a contact not found message",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "404",
+                            "to": [
+                                "responseCode"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "ERROR",
+                            "to": [
+                                "APIResponse",
+                                "result"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "\"Contact not found.\"",
+                            "evaluate": true,
+                            "to": [
+                                "APIResponse",
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+    "type": "customSql",
+    "input": [
+        {
+            "name": "addContactsInput",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "$martiniConnectionPool"
+                },
+                {
+                    "name": "$batchSize",
+                    "type": "integer"
+                },
+                {
+                    "name": "$parentJDBCBatchCursor",
+                    "type": "object",
+                    "objectClassName": "io.toro.gloop.cursor.jdbc.JDBCBatchGloopCursor"
+                },
+                {
+                    "name": "getGeneratedKeys",
+                    "type": "boolean",
+                    "defaultValue": false
+                }
+            ]
+        }
+    ],
+    "output": [
+        {
+            "name": "addContactsOutputCursor",
+            "type": "model",
+            "array": true,
+            "gloopProperties": [
+                {
+                    "name": "id"
+                },
+                {
+                    "name": "firstName"
+                },
+                {
+                    "name": "lastName"
+                },
+                {
+                    "name": "email"
+                },
+                {
+                    "name": "phoneNumber"
+                }
+            ]
+        }
+    ],
+    "connectionPoolName": "mock_contact_api",
+    "sqlType": "INSERT_BATCH",
+    "query": "INSERT INTO \"CONTACTS\" (\n    \"ID\",\n    \"FIRST_NAME\",\n    \"LAST_NAME\",\n    \"EMAIL\",\n    \"PHONE_NUMBER\"\n)\nVALUES (\n    :id,\n    :firstName,\n    :lastName,\n    :email,\n    :phoneNumber\n)"
+}

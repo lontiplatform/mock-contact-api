@@ -1,0 +1,42 @@
+{
+    "comments": "This utility service checks if the contact is existing in the database.",
+    "input": [
+        {
+            "name": "id"
+        }
+    ],
+    "output": [
+        {
+            "name": "value",
+            "type": "boolean"
+        }
+    ],
+    "steps": [
+        {
+            "type": "invokeGloop",
+            "comments": "Check if the contact exists in the database",
+            "name": "io.toro.mock.contact.sql.GetContact",
+            "inputs": [
+                {
+                    "from": [
+                        "id"
+                    ],
+                    "to": [
+                        "getContactInput",
+                        "id"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "set",
+                    "expression": "$gloopOutput != null",
+                    "evaluate": true,
+                    "to": [
+                        "value"
+                    ]
+                }
+            ]
+        }
+    ]
+}

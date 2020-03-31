@@ -1,0 +1,95 @@
+{
+    "comments": "This utility service retrieves all the values from the package's properties file.",
+    "input": [
+        {
+            "name": "type"
+        }
+    ],
+    "output": [
+        {
+            "name": "database",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "type"
+                },
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "url"
+                },
+                {
+                    "name": "driver"
+                },
+                {
+                    "name": "username"
+                },
+                {
+                    "name": "password"
+                }
+            ]
+        }
+    ],
+    "steps": [
+        {
+            "comments": "Retrieve all the values from the properties file",
+            "lines": [
+                {
+                    "type": "set",
+                    "expression": "type ?: \"database.type\".getPackageProperty(\"hsql\")",
+                    "evaluate": true,
+                    "to": [
+                        "database",
+                        "type"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "\"database.name\".getPackageProperty(\"mock_contact_api\")",
+                    "evaluate": true,
+                    "to": [
+                        "database",
+                        "name"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "\"${database.type}.connection.url\".getPackageProperty()",
+                    "evaluate": true,
+                    "to": [
+                        "database",
+                        "url"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "\"${database.type}.driver\".getPackageProperty()",
+                    "evaluate": true,
+                    "to": [
+                        "database",
+                        "driver"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "\"${database.type}.username\".getPackageProperty()",
+                    "evaluate": true,
+                    "to": [
+                        "database",
+                        "username"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "\"${database.type}.password\".getPackageProperty()",
+                    "evaluate": true,
+                    "to": [
+                        "database",
+                        "password"
+                    ]
+                }
+            ]
+        }
+    ]
+}

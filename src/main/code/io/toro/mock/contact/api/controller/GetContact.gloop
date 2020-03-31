@@ -1,0 +1,201 @@
+{
+    "comments": "This service retrieves a contact based on the inputted `contactId`.",
+    "input": [
+        {
+            "name": "contactId",
+            "required": true,
+            "allowNull": false
+        }
+    ],
+    "output": [
+        {
+            "name": "contact",
+            "type": "model",
+            "reference": "io.toro.mock.contact.model.Contact",
+            "gloopProperties": [
+                {
+                    "name": "dateCreated",
+                    "type": "long"
+                },
+                {
+                    "name": "dateUpdated",
+                    "type": "long"
+                },
+                {
+                    "name": "id"
+                }
+            ]
+        },
+        {
+            "name": "responseCode",
+            "type": "integer",
+            "defaultValue": 200
+        },
+        {
+            "name": "APIResponse",
+            "type": "model",
+            "reference": "io.toro.mock.contact.model.APIResponse"
+        }
+    ],
+    "steps": [
+        {
+            "type": "invokeGloop",
+            "name": "io.toro.mock.contact.api.controller.util.IsContactExisting",
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "isContactExisting",
+                            "type": "boolean"
+                        }
+                    ]
+                }
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "contactId"
+                    ],
+                    "to": [
+                        "id"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "value"
+                    ],
+                    "to": [
+                        "isContactExisting"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "fork",
+            "comments": "Is contact existing?",
+            "expression": "isContactExisting",
+            "children": [
+                {
+                    "type": "invokeGloop",
+                    "label": "true",
+                    "comments": "If yes, get contact",
+                    "name": "io.toro.mock.contact.sql.GetContact",
+                    "inputs": [
+                        {
+                            "from": [
+                                "contactId"
+                            ],
+                            "to": [
+                                "getContactInput",
+                                "id"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "getContactOutput",
+                                "FIRST_NAME"
+                            ],
+                            "to": [
+                                "contact",
+                                "firstName"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "getContactOutput",
+                                "LAST_NAME"
+                            ],
+                            "to": [
+                                "contact",
+                                "lastName"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "getContactOutput",
+                                "EMAIL"
+                            ],
+                            "to": [
+                                "contact",
+                                "email"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "getContactOutput",
+                                "PHONE_NUMBER"
+                            ],
+                            "to": [
+                                "contact",
+                                "phoneNumber"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "contactId",
+                            "evaluate": true,
+                            "to": [
+                                "contact",
+                                "id"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "getContactOutput",
+                                "DATE_CREATED"
+                            ],
+                            "to": [
+                                "contact",
+                                "dateCreated"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "getContactOutput",
+                                "DATE_UPDATED"
+                            ],
+                            "to": [
+                                "contact",
+                                "dateUpdated"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "false",
+                    "comments": "If not, return a contact not found message",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "404",
+                            "to": [
+                                "responseCode"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "ERROR",
+                            "to": [
+                                "APIResponse",
+                                "result"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "\"Contact not found.\"",
+                            "evaluate": true,
+                            "to": [
+                                "APIResponse",
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

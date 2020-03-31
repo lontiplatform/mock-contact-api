@@ -1,0 +1,38 @@
+{
+    "type": "customSql",
+    "input": [
+        {
+            "name": "updateContactInput",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "$martiniConnectionPool"
+                },
+                {
+                    "name": "firstName"
+                },
+                {
+                    "name": "lastName"
+                },
+                {
+                    "name": "email"
+                },
+                {
+                    "name": "phoneNumber"
+                },
+                {
+                    "name": "id"
+                }
+            ]
+        }
+    ],
+    "output": [
+        {
+            "name": "updateCount",
+            "type": "integer"
+        }
+    ],
+    "connectionPoolName": "mock_contact_api",
+    "sqlType": "UPDATE",
+    "query": "UPDATE \"CONTACTS\"\nSET\n\t\"FIRST_NAME\" = COALESCE( :firstName, \"FIRST_NAME\" ),\n\t\"LAST_NAME\" = COALESCE( :lastName, \"LAST_NAME\" ),\n\t\"EMAIL\" = COALESCE( :email, \"EMAIL\" ),\n\t\"PHONE_NUMBER\" = COALESCE( :phoneNumber, \"PHONE_NUMBER\" ),\n\t\"DATE_UPDATED\" = CURRENT_TIMESTAMP\n\t\nWHERE (\n    \"ID\" = :id\n)"
+}

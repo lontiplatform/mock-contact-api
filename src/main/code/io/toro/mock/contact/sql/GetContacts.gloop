@@ -1,0 +1,65 @@
+{
+    "type": "customSql",
+    "input": [
+        {
+            "name": "getContactsInput",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "$martiniConnectionPool"
+                },
+                {
+                    "name": "$limit",
+                    "type": "integer"
+                }
+            ]
+        }
+    ],
+    "output": [
+        {
+            "name": "getContactsInputCursor",
+            "type": "model",
+            "array": true,
+            "gloopProperties": [
+                {
+                    "name": "ID",
+                    "required": true,
+                    "allowNull": false
+                },
+                {
+                    "name": "FIRST_NAME",
+                    "required": true,
+                    "allowNull": false
+                },
+                {
+                    "name": "LAST_NAME",
+                    "required": true,
+                    "allowNull": false
+                },
+                {
+                    "name": "EMAIL",
+                    "required": true,
+                    "allowNull": false
+                },
+                {
+                    "name": "PHONE_NUMBER",
+                    "required": true,
+                    "allowNull": false
+                },
+                {
+                    "name": "DATE_CREATED",
+                    "type": "date",
+                    "required": true
+                },
+                {
+                    "name": "DATE_UPDATED",
+                    "type": "date",
+                    "required": true
+                }
+            ]
+        }
+    ],
+    "connectionPoolName": "mock_contact_api",
+    "sqlType": "SELECT_MULTI",
+    "query": "SELECT *\nFROM\n    \"CONTACTS\""
+}

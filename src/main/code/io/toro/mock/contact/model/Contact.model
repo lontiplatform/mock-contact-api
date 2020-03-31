@@ -1,0 +1,22 @@
+{
+    "name": "Contact",
+    "type": "model",
+    "gloopProperties": [
+        {
+            "name": "firstName",
+            "comments": "The first name of the contact"
+        },
+        {
+            "name": "lastName",
+            "comments": "The last name of the contact"
+        },
+        {
+            "name": "email",
+            "comments": "The email of the contact"
+        },
+        {
+            "name": "phoneNumber",
+            "comments": "The phone number of the contact"
+        }
+    ]
+}

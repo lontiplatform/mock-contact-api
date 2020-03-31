@@ -1,0 +1,203 @@
+{
+    "comments": "This service adds a contact to the database and returns the APIs response.",
+    "input": [
+        {
+            "name": "contact",
+            "type": "model",
+            "required": true,
+            "allowNull": false,
+            "reference": "io.toro.mock.contact.model.Contact"
+        }
+    ],
+    "output": [
+        {
+            "name": "responseCode",
+            "type": "integer",
+            "defaultValue": 201
+        },
+        {
+            "name": "APIResponse",
+            "type": "model",
+            "reference": "io.toro.mock.contact.model.APIResponse",
+            "gloopProperties": [
+                {
+                    "name": "contact",
+                    "type": "model",
+                    "reference": "io.toro.mock.contact.model.Contact",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "id"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "id"
+                                }
+                            ]
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "UUID.randomUUID()",
+                            "evaluate": true,
+                            "to": [
+                                "id"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "comments": "Add contact to the database",
+                    "name": "io.toro.mock.contact.sql.AddContact",
+                    "inputs": [
+                        {
+                            "from": [
+                                "contact",
+                                "firstName"
+                            ],
+                            "to": [
+                                "addContactInput",
+                                "firstName"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "contact",
+                                "lastName"
+                            ],
+                            "to": [
+                                "addContactInput",
+                                "lastName"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "contact",
+                                "email"
+                            ],
+                            "to": [
+                                "addContactInput",
+                                "email"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "contact",
+                                "phoneNumber"
+                            ],
+                            "to": [
+                                "addContactInput",
+                                "phoneNumber"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "true",
+                            "to": [
+                                "addContactInput",
+                                "$getGeneratedKeys"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "id"
+                            ],
+                            "to": [
+                                "addContactInput",
+                                "id"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "comments": "Return a success message",
+                    "lines": [
+                        {
+                            "from": [
+                                "contact"
+                            ],
+                            "to": [
+                                "APIResponse",
+                                "contact"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "SUCCESS",
+                            "to": [
+                                "APIResponse",
+                                "result"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "\"Successfully added contact.\"",
+                            "evaluate": true,
+                            "to": [
+                                "APIResponse",
+                                "message"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "id"
+                            ],
+                            "to": [
+                                "APIResponse",
+                                "contact",
+                                "id"
+                            ],
+                            "priority": 1
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

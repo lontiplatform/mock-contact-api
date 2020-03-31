@@ -1,0 +1,427 @@
+{
+    "comments": "This service is used to initialize the database connection this mock api requires. It currently supports two databases.\n\n1. HSQL\n2. MYSQL\n\nTo select either of the supported database, just set the value of the `database` property in the package properties to `hsql` or `mysql`",
+    "steps": [
+        {
+            "type": "invokeGloop",
+            "comments": "Retrieve all the values declared in the package's properties file",
+            "name": "io.toro.mock.contact.util.GetDatabaseConnectionDetails",
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "database",
+                            "type": "model",
+                            "gloopProperties": [
+                                {
+                                    "name": "type"
+                                },
+                                {
+                                    "name": "name"
+                                },
+                                {
+                                    "name": "url"
+                                },
+                                {
+                                    "name": "driver"
+                                },
+                                {
+                                    "name": "username"
+                                },
+                                {
+                                    "name": "password"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "dateType"
+                        }
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "database"
+                    ],
+                    "to": [
+                        "database"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "'database.type'.getPackageProperty().equalsIgnoreCase( 'mssql' ) ? 'DATETIME' : 'TIMESTAMP'",
+                    "evaluate": true,
+                    "to": [
+                        "dateType"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "fork",
+                    "expression": "'database.type'.getPackageProperty().equalsIgnoreCase( 'oracle' )",
+                    "children": [
+                        {
+                            "type": "invokeCode",
+                            "label": "true",
+                            "className": "io.toro.martini.GloopMethods",
+                            "methodName": "setSystemProperty",
+                            "parameters": [
+                                "java.lang.String",
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "type": "set",
+                                    "expression": "oracle.jdbc.J2EE13Compliant",
+                                    "to": [
+                                        "name"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "true",
+                                    "to": [
+                                        "value"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "comments": "Check if the database connection exists",
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "isConnectionExisting",
+                                    "type": "boolean",
+                                    "allowNull": false
+                                }
+                            ]
+                        }
+                    ],
+                    "className": "io.toro.martini.DatabaseConnectionPoolMethods",
+                    "methodName": "containsConnectionWithName",
+                    "parameters": [
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "database",
+                                "name"
+                            ],
+                            "to": [
+                                "name"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "output"
+                            ],
+                            "to": [
+                                "isConnectionExisting"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "comments": "Is the database connection existing?",
+                    "expression": "isConnectionExisting",
+                    "children": [
+                        {
+                            "type": "block",
+                            "label": "false",
+                            "comments": "If yes",
+                            "children": [
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Log which database configuration will be used",
+                                    "className": "io.toro.martini.LoggerMethods",
+                                    "methodName": "info",
+                                    "parameters": [
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "type": "set",
+                                            "expression": "\"Using database type of '${database.type}'.\"",
+                                            "evaluate": true,
+                                            "to": [
+                                                "message"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Log a message that the creation of the database connection is starting",
+                                    "className": "io.toro.martini.LoggerMethods",
+                                    "methodName": "info",
+                                    "parameters": [
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "type": "set",
+                                            "expression": "\"Creating database connection '${database.name}'.\"",
+                                            "evaluate": true,
+                                            "to": [
+                                                "message"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Create the database connection",
+                                    "className": "io.toro.martini.DatabaseConnectionPoolMethods",
+                                    "methodName": "savePool",
+                                    "parameters": [
+                                        "io.toro.gloop.object.property.GloopModel"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "database",
+                                                "name"
+                                            ],
+                                            "to": [
+                                                "connectionPoolInfo",
+                                                "name"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "database",
+                                                "url"
+                                            ],
+                                            "to": [
+                                                "connectionPoolInfo",
+                                                "url"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "database",
+                                                "driver"
+                                            ],
+                                            "to": [
+                                                "connectionPoolInfo",
+                                                "driverClass"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "database",
+                                                "username"
+                                            ],
+                                            "to": [
+                                                "connectionPoolInfo",
+                                                "username"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "database",
+                                                "password"
+                                            ],
+                                            "to": [
+                                                "connectionPoolInfo",
+                                                "password"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Log a message that the database connection will be started",
+                                    "className": "io.toro.martini.LoggerMethods",
+                                    "methodName": "info",
+                                    "parameters": [
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "type": "set",
+                                            "expression": "\"Starting database connection '${database.name}'.\"",
+                                            "evaluate": true,
+                                            "to": [
+                                                "message"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Start the database connection",
+                                    "className": "io.toro.martini.DatabaseConnectionPoolMethods",
+                                    "methodName": "startPool",
+                                    "parameters": [
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "database",
+                                                "name"
+                                            ],
+                                            "to": [
+                                                "name"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Log a message that the database connection will be started",
+                                    "className": "io.toro.martini.LoggerMethods",
+                                    "methodName": "info",
+                                    "parameters": [
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "type": "set",
+                                            "expression": "\"Creating table 'CONTACTS'.\"",
+                                            "evaluate": true,
+                                            "to": [
+                                                "message"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "comments": "Create the table",
+                    "className": "io.toro.martini.SqlMethods",
+                    "methodName": "sql",
+                    "parameters": [
+                        "java.lang.String",
+                        "groovy.lang.Closure"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "database",
+                                "name"
+                            ],
+                            "to": [
+                                "poolName"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "{\tsql ->\n\tsql.execute \"\"\"CREATE TABLE \"CONTACTS\" (\n    \t\"ID\" VARCHAR(50) PRIMARY KEY,\n    \t\"FIRST_NAME\" VARCHAR(50) NOT NULL,\n    \t\"LAST_NAME\" VARCHAR(50) NOT NULL,\n    \t\"EMAIL\" VARCHAR(50) NOT NULL UNIQUE,\n    \t\"PHONE_NUMBER\" VARCHAR(50) NOT NULL,\n    \t\"DATE_CREATED\" $dateType DEFAULT CURRENT_TIMESTAMP,\n    \t\"DATE_UPDATED\" $dateType DEFAULT CURRENT_TIMESTAMP\n\t)\"\"\".toString()\n}",
+                            "evaluate": true,
+                            "to": [
+                                "c"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "comments": "Is the debug flag enabled?",
+                    "expression": "\"debug.enabled\".getPackageProperty(\"false\")",
+                    "children": [
+                        {
+                            "type": "block",
+                            "label": "true",
+                            "comments": "If yes",
+                            "children": [
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Log a message that indicates that debug is enabled",
+                                    "className": "io.toro.martini.LoggerMethods",
+                                    "methodName": "info",
+                                    "parameters": [
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "type": "set",
+                                            "expression": "Debug flag is set to 'true'.",
+                                            "to": [
+                                                "message"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeGloop",
+                                    "comments": "If yes, populate the database with dummy data since the debug flag is set to true",
+                                    "name": "io.toro.mock.contact.config.PopulateDatabase",
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "database",
+                                                "name"
+                                            ],
+                                            "to": [
+                                                "connectionName"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "CONTACT",
+                                            "to": [
+                                                "tableName"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "comments": "Log an error message when the service throws an exception",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,163 @@
+{
+    "comments": "This service reads the `data.json` file in the `resources` directory which in turn will be inserted to the database as dummy data.\n\nThis service can read any JSON file under the `resources` directory, this will also insert those records into the database. ",
+    "input": [
+        {
+            "name": "connectionName",
+            "defaultValue": "mock_contact_api"
+        },
+        {
+            "name": "tableName",
+            "defaultValue": "contacts"
+        },
+        {
+            "name": "fileName",
+            "defaultValue": "resources/data.json"
+        }
+    ],
+    "steps": [
+        {
+            "type": "invokeCode",
+            "comments": "Log a message regarding the population of the table with dummy data",
+            "className": "io.toro.martini.LoggerMethods",
+            "methodName": "info",
+            "parameters": [
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "type": "set",
+                    "expression": "\"Populating table '${tableName}' with records.\"",
+                    "evaluate": true,
+                    "to": [
+                        "message"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeGloop",
+            "comments": "Get the dummy data",
+            "name": "io.toro.mock.contact.util.GetRecords",
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "contacts",
+                            "type": "model",
+                            "array": true,
+                            "reference": "io.toro.mock.contact.model.Contact",
+                            "gloopProperties": [
+                                {
+                                    "name": "id"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "fileName"
+                    ],
+                    "to": [
+                        "file"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "contacts"
+                    ],
+                    "to": [
+                        "contacts"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeGloop",
+            "comments": "Get the output cursor for inserting records",
+            "name": "io.toro.mock.contact.sql.AddContacts",
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "outputCursor",
+                            "type": "model",
+                            "array": true,
+                            "gloopProperties": [
+                                {
+                                    "name": "id"
+                                },
+                                {
+                                    "name": "firstName"
+                                },
+                                {
+                                    "name": "lastName"
+                                },
+                                {
+                                    "name": "email"
+                                },
+                                {
+                                    "name": "phoneNumber"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "connectionName"
+                    ],
+                    "to": [
+                        "addContactsInput",
+                        "$martiniConnectionPool"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "addContactsOutputCursor"
+                    ],
+                    "to": [
+                        "outputCursor"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "iterate",
+            "comments": "Iterate over the dummy data",
+            "input": {
+                "path": [
+                    "contacts"
+                ]
+            },
+            "output": {
+                "path": [
+                    "outputCursor"
+                ]
+            },
+            "children": [
+                {
+                    "comments": "Pass the dummy data to the output cursor to insert it in the database",
+                    "lines": [
+                        {
+                            "from": [
+                                "contacts"
+                            ],
+                            "to": [
+                                "outputCursor"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

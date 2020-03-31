@@ -1,0 +1,232 @@
+{
+    "comments": "This service is used to delete the previously created database connection and table in the package's startup service if the `debug.enabled` property is set to `true`.\n\nOtherwise, this service does nothing.",
+    "steps": [
+        {
+            "type": "fork",
+            "comments": "Is the debug flag enabled?",
+            "expression": "\"debug.enabled\".getPackageProperty(\"false\")",
+            "children": [
+                {
+                    "type": "block",
+                    "label": "true",
+                    "comments": "If yes",
+                    "children": [
+                        {
+                            "type": "invokeCode",
+                            "comments": "Log a message that indicates that debug is enabled",
+                            "className": "io.toro.martini.LoggerMethods",
+                            "methodName": "info",
+                            "parameters": [
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "type": "set",
+                                    "expression": "Debug flag is set to 'true'.",
+                                    "to": [
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "invokeGloop",
+                            "comments": "Retrieve all the values declared in the package's properties file",
+                            "name": "io.toro.mock.contact.util.GetDatabaseConnectionDetails",
+                            "declare": [
+                                {
+                                    "variables": [
+                                        {
+                                            "name": "database",
+                                            "type": "model",
+                                            "gloopProperties": [
+                                                {
+                                                    "name": "type"
+                                                },
+                                                {
+                                                    "name": "name"
+                                                },
+                                                {
+                                                    "name": "url"
+                                                },
+                                                {
+                                                    "name": "driver"
+                                                },
+                                                {
+                                                    "name": "username"
+                                                },
+                                                {
+                                                    "name": "password"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "from": [
+                                        "database"
+                                    ],
+                                    "to": [
+                                        "database"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "invokeCode",
+                            "comments": "Log a message that the table will be deleted",
+                            "className": "io.toro.martini.LoggerMethods",
+                            "methodName": "info",
+                            "parameters": [
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "type": "set",
+                                    "expression": "\"Deleting table 'CONTACTS'.\"",
+                                    "evaluate": true,
+                                    "to": [
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "block",
+                            "blockType": "TRY_CATCH",
+                            "children": [
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Delete the table",
+                                    "className": "io.toro.martini.SqlMethods",
+                                    "methodName": "sql",
+                                    "parameters": [
+                                        "java.lang.String",
+                                        "groovy.lang.Closure"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "database",
+                                                "name"
+                                            ],
+                                            "to": [
+                                                "poolName"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "{\tsql ->\n\tsql.execute '''DROP TABLE \"CONTACTS\"'''\n}",
+                                            "evaluate": true,
+                                            "to": [
+                                                "c"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "catch": [
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Log an error message when the service throws an exception",
+                                    "className": "io.toro.martini.LoggerMethods",
+                                    "methodName": "error",
+                                    "parameters": [
+                                        "java.lang.String",
+                                        "java.lang.Throwable"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "$gloopException",
+                                                "gloopStackTrace"
+                                            ],
+                                            "to": [
+                                                "message"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "$gloopException",
+                                                "realException"
+                                            ],
+                                            "to": [
+                                                "throwable"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "invokeCode",
+                            "comments": "Log a message that the database connection will be deleted",
+                            "className": "io.toro.martini.LoggerMethods",
+                            "methodName": "info",
+                            "parameters": [
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "type": "set",
+                                    "expression": "\"Deleting database connection '${database.name}'.\"",
+                                    "evaluate": true,
+                                    "to": [
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "invokeCode",
+                            "comments": "Stop the connection",
+                            "className": "io.toro.martini.DatabaseConnectionPoolMethods",
+                            "methodName": "stopPool",
+                            "parameters": [
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "from": [
+                                        "database",
+                                        "name"
+                                    ],
+                                    "to": [
+                                        "name"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "invokeCode",
+                            "comments": "Delete the connection",
+                            "className": "io.toro.martini.DatabaseConnectionPoolMethods",
+                            "methodName": "deletePool",
+                            "parameters": [
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "from": [
+                                        "database",
+                                        "name"
+                                    ],
+                                    "to": [
+                                        "name"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "gloovy",
+                            "comments": "unset the J2EE13Compliance property if database type currently in use is oracle",
+                            "gloovyScript": "if ( 'database.type'.getPackageProperty().equalsIgnoreCase( 'oracle' ) )\n\tSystem.clearProperty( 'oracle.jdbc.J2EE13Compliant' )"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,182 @@
+{
+    "info": {
+        "title": "Mock Contact API",
+        "description": "This is a sample contacts server. This can be used for mocking or testing APIs.",
+        "contact": {
+            "name": "TORO Cloud",
+            "url": "https://support.torocloud.com"
+        },
+        "license": {
+            "name": "MIT"
+        },
+        "version": "1.0.0-SNAPSHOT"
+    },
+    "basePath": "/mock-contact-api",
+    "paths": {
+        "/contacts": {
+            "description": "Contact endpoint for getting all contacts and adding a single contact",
+            "get": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Returns a list of all contacts stored in the database",
+                "description": "### Get Contacts\nThis endpoint will retrieve all contacts in the mock contact API",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "responses": {
+                    "200": {
+                        "body": "contacts",
+                        "description": "List of all contacts"
+                    }
+                },
+                "operationType": "gloop",
+                "operationLocation": "io.toro.mock.contact.api.controller.GetContacts",
+                "responseCodeField": "responseCode"
+            },
+            "post": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Adds a contact to the database",
+                "description": "### Add Contact\nThis endpoint will add a contact in the mock contact API",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "bodyParameter": {
+                    "name": "contact",
+                    "description": "The contact to be added"
+                },
+                "responses": {
+                    "201": {
+                        "body": "APIResponse",
+                        "description": "Message returned when a contact is successfully added"
+                    }
+                },
+                "operationType": "gloop",
+                "operationLocation": "io.toro.mock.contact.api.controller.AddContact",
+                "responseCodeField": "responseCode"
+            }
+        },
+        "/contacts/{contactId}": {
+            "description": "Contact endpoint for getting, updating, and deleting a single contact",
+            "get": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Returns a single contact",
+                "description": "### Get Contact\nThis endpoint will retrieve a contact in the mock contact API",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "contactId",
+                        "type": "PATH",
+                        "description": "The ID of the contact to find"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "body": "contact",
+                        "description": "Represents a contact"
+                    },
+                    "404": {
+                        "body": "APIResponse",
+                        "description": "Message returned when a contact requested is not existing"
+                    }
+                },
+                "operationType": "gloop",
+                "operationLocation": "io.toro.mock.contact.api.controller.GetContact",
+                "responseCodeField": "responseCode"
+            },
+            "delete": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Deletes a single contact",
+                "description": "Deletes a single contact",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "contactId",
+                        "type": "PATH",
+                        "description": "The ID of the contact to delete"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "body": "APIResponse",
+                        "description": "Message returned when a contact is successfully deleted"
+                    },
+                    "404": {
+                        "body": "APIResponse",
+                        "description": "Message returned when a contact requested is not existing"
+                    }
+                },
+                "operationType": "gloop",
+                "operationLocation": "io.toro.mock.contact.api.controller.DeleteContact",
+                "responseCodeField": "responseCode"
+            },
+            "patch": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Updates a single contact",
+                "description": "### Update Contact\nThis endpoint will update a contact in the mock contact API",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "contactId",
+                        "type": "PATH",
+                        "description": "The ID of the contact to updated"
+                    }
+                ],
+                "bodyParameter": {
+                    "name": "contact",
+                    "description": "The contact to be modified"
+                },
+                "responses": {
+                    "200": {
+                        "body": "APIResponse",
+                        "description": "The updated contact values"
+                    },
+                    "404": {
+                        "body": "APIResponse",
+                        "description": "Message returned when a contact requested is not existing"
+                    }
+                },
+                "operationType": "gloop",
+                "operationLocation": "io.toro.mock.contact.api.controller.UpdateContact",
+                "responseCodeField": "responseCode"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Contact",
+            "description": "The APIs for managing contacts.",
+            "externalDocumentation": {
+                "url": "https://docs.torocloud.com/",
+                "description": "The documentation site of Martini."
+            }
+        }
+    ]
+}

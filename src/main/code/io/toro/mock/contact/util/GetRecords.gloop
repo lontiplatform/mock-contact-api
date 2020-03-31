@@ -1,0 +1,193 @@
+{
+    "comments": "This utility service reads the provided file path and maps the data to the output Gloop model.",
+    "input": [
+        {
+            "name": "file",
+            "defaultValue": "resources/data.json"
+        }
+    ],
+    "output": [
+        {
+            "name": "contacts",
+            "type": "model",
+            "array": true,
+            "reference": "io.toro.mock.contact.model.Contact",
+            "gloopProperties": [
+                {
+                    "name": "id"
+                }
+            ]
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "invokeCode",
+                    "comments": "Open the resource file",
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "inputStream",
+                                    "type": "object",
+                                    "objectClassName": "java.io.InputStream"
+                                }
+                            ]
+                        }
+                    ],
+                    "className": "io.toro.martini.FileMethods",
+                    "methodName": "resourceStream",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String",
+                        "io.toro.gloop.engine.GloopExecutionContext"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "file"
+                            ],
+                            "to": [
+                                "resource"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "output"
+                            ],
+                            "to": [
+                                "inputStream"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "comments": "Create a Gloop model object from the resource stream",
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "inputCursor",
+                                    "type": "model",
+                                    "array": true,
+                                    "gloopProperties": [
+                                        {
+                                            "name": "nodeName"
+                                        },
+                                        {
+                                            "name": "cursorRecord",
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "className": "io.toro.martini.JsonMethods",
+                    "methodName": "getInputCursorFromInputStream",
+                    "parameters": [
+                        "java.io.InputStream",
+                        "java.lang.String",
+                        "java.util.List",
+                        "io.toro.gloop.engine.GloopExecutionContext"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "inputStream"
+                            ],
+                            "to": [
+                                "inputStream"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "$jsonRoot",
+                            "to": [
+                                "jsonNodeNames"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "gloopJsonCursor"
+                            ],
+                            "to": [
+                                "inputCursor"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "iterate",
+                    "comments": "Iterate over the Gloop model",
+                    "input": {
+                        "path": [
+                            "inputCursor"
+                        ]
+                    },
+                    "output": {
+                        "path": [
+                            "contacts"
+                        ]
+                    },
+                    "children": [
+                        {
+                            "comments": "Map the Gloop model to the output model",
+                            "lines": [
+                                {
+                                    "from": [
+                                        "inputCursor",
+                                        "cursorRecord"
+                                    ],
+                                    "to": [
+                                        "contacts"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "comments": "Log an error message when the service throws an exception",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,192 @@
+{
+    "comments": "This service retrieves all contacts.",
+    "output": [
+        {
+            "name": "contacts",
+            "type": "model",
+            "array": true,
+            "reference": "io.toro.mock.contact.model.Contact",
+            "gloopProperties": [
+                {
+                    "name": "id"
+                },
+                {
+                    "name": "dateCreated",
+                    "type": "long"
+                },
+                {
+                    "name": "dateUpdated",
+                    "type": "long"
+                }
+            ]
+        },
+        {
+            "name": "responseCode",
+            "type": "integer",
+            "defaultValue": 200
+        },
+        {
+            "name": "APIResponse",
+            "type": "model",
+            "reference": "io.toro.mock.contact.model.APIResponse"
+        }
+    ],
+    "steps": [
+        {
+            "type": "invokeGloop",
+            "comments": "Get input cursor from SQL service",
+            "name": "io.toro.mock.contact.sql.GetContacts",
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "inputCursor",
+                            "type": "model",
+                            "array": true,
+                            "gloopProperties": [
+                                {
+                                    "name": "ID",
+                                    "required": true,
+                                    "allowNull": false
+                                },
+                                {
+                                    "name": "FIRST_NAME",
+                                    "required": true,
+                                    "allowNull": false
+                                },
+                                {
+                                    "name": "LAST_NAME",
+                                    "required": true,
+                                    "allowNull": false
+                                },
+                                {
+                                    "name": "EMAIL",
+                                    "required": true,
+                                    "allowNull": false
+                                },
+                                {
+                                    "name": "PHONE_NUMBER",
+                                    "required": true,
+                                    "allowNull": false
+                                },
+                                {
+                                    "name": "DATE_CREATED",
+                                    "type": "date",
+                                    "required": true,
+                                    "outputExpression": "if ( 'database.type'.getPackageProperty().equalsIgnoreCase( 'oracle' ) )\n\treturn val.timestampValue()"
+                                },
+                                {
+                                    "name": "DATE_UPDATED",
+                                    "type": "date",
+                                    "required": true,
+                                    "outputExpression": "if ( 'database.type'.getPackageProperty().equalsIgnoreCase( 'oracle' ) )\n\treturn val.timestampValue()"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "getContactsInputCursor"
+                    ],
+                    "to": [
+                        "inputCursor"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "iterate",
+            "comments": "Iterate over input cursor",
+            "input": {
+                "path": [
+                    "inputCursor"
+                ]
+            },
+            "output": {
+                "path": [
+                    "contacts"
+                ]
+            },
+            "children": [
+                {
+                    "comments": "Map cursor data to output model",
+                    "lines": [
+                        {
+                            "from": [
+                                "inputCursor",
+                                "FIRST_NAME"
+                            ],
+                            "to": [
+                                "contacts",
+                                "firstName"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "inputCursor",
+                                "LAST_NAME"
+                            ],
+                            "to": [
+                                "contacts",
+                                "lastName"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "inputCursor",
+                                "EMAIL"
+                            ],
+                            "to": [
+                                "contacts",
+                                "email"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "inputCursor",
+                                "PHONE_NUMBER"
+                            ],
+                            "to": [
+                                "contacts",
+                                "phoneNumber"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "inputCursor",
+                                "ID"
+                            ],
+                            "to": [
+                                "contacts",
+                                "id"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "inputCursor",
+                                "DATE_CREATED"
+                            ],
+                            "to": [
+                                "contacts",
+                                "dateCreated"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "inputCursor",
+                                "DATE_UPDATED"
+                            ],
+                            "to": [
+                                "contacts",
+                                "dateUpdated"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
