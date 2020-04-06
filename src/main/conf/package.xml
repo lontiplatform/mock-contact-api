@@ -1,4 +1,4 @@
-<package stateOnStartup="started" id="mock-contact-api" version="1.0.0-SNAPSHOT" context-path="/mock-contact-api">
+<package stateOnStartup="started" id="mock-contact-api" version="1.0.0" context-path="/mock-contact-api">
   <package-dependencies/>
   <startup-services>
     <startup-service>gloop:io.toro.mock.contact.config.CreateDatabaseConnection/io.toro.mock.contact.config.CreateDatabaseConnection</startup-service>
