@@ -9,24 +9,6 @@
     ],
     "output": [
         {
-            "name": "contact",
-            "type": "model",
-            "reference": "io.toro.mock.contact.model.Contact",
-            "gloopProperties": [
-                {
-                    "name": "dateCreated",
-                    "type": "long"
-                },
-                {
-                    "name": "dateUpdated",
-                    "type": "long"
-                },
-                {
-                    "name": "id"
-                }
-            ]
-        },
-        {
             "name": "responseCode",
             "type": "integer",
             "defaultValue": 200
@@ -34,7 +16,32 @@
         {
             "name": "APIResponse",
             "type": "model",
-            "reference": "io.toro.mock.contact.model.APIResponse"
+            "reference": "io.toro.mock.contact.model.APIResponse",
+            "gloopProperties": [
+                {
+                    "name": "contact",
+                    "type": "model",
+                    "reference": "io.toro.mock.contact.model.Contact",
+                    "gloopProperties": [
+                        {
+                            "name": "dateCreated",
+                            "type": "long"
+                        },
+                        {
+                            "name": "dateUpdated",
+                            "type": "long"
+                        },
+                        {
+                            "name": "id"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "APIException",
+            "type": "model",
+            "reference": "io.toro.martini.api.APIException"
         }
     ],
     "steps": [
@@ -97,9 +104,21 @@
                         {
                             "from": [
                                 "getContactOutput",
+                                "ID"
+                            ],
+                            "to": [
+                                "APIResponse",
+                                "contact",
+                                "id"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "getContactOutput",
                                 "FIRST_NAME"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contact",
                                 "firstName"
                             ]
@@ -110,6 +129,7 @@
                                 "LAST_NAME"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contact",
                                 "lastName"
                             ]
@@ -120,6 +140,7 @@
                                 "EMAIL"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contact",
                                 "email"
                             ]
@@ -130,17 +151,9 @@
                                 "PHONE_NUMBER"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contact",
                                 "phoneNumber"
-                            ]
-                        },
-                        {
-                            "type": "set",
-                            "expression": "contactId",
-                            "evaluate": true,
-                            "to": [
-                                "contact",
-                                "id"
                             ]
                         },
                         {
@@ -149,6 +162,7 @@
                                 "DATE_CREATED"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contact",
                                 "dateCreated"
                             ]
@@ -159,6 +173,7 @@
                                 "DATE_UPDATED"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contact",
                                 "dateUpdated"
                             ]
@@ -180,16 +195,23 @@
                             "type": "set",
                             "expression": "ERROR",
                             "to": [
-                                "APIResponse",
+                                "APIException",
                                 "result"
                             ]
                         },
                         {
                             "type": "set",
-                            "expression": "\"Contact not found.\"",
-                            "evaluate": true,
+                            "expression": "404",
                             "to": [
-                                "APIResponse",
+                                "APIException",
+                                "httpErrorCode"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "Contact not found.",
+                            "to": [
+                                "APIException",
                                 "message"
                             ]
                         }

@@ -51,6 +51,17 @@ mysql.password=
 * `database.type` sets the database provider the Martini package will use. If you will use the default hsql config, you don't need to change anything in the hsql configuration. **Note**: If you will use a different hsql database, make sure that you add `sql.syntax_mys=true` in the connection properties. This ensures that the SQL query from the SQL Services in this package will be compatible with hsql.
 
 
+### Sending Authenticated Requests
+
+You can use your ECC account to send authenticated request to the API. Your ECC credentials must be sent in the `Authorization` header in the HTTP request
+
+#### To authenticate a request with basic authentication
+
+1. Combine your email and password with a colon (`:`). e.g. `jdoe@mailinator.com:pa$$w0rd`
+2. Encode the resulting string in Base64
+3. Include an Authorization header in the HTTP request containing the base64-encoded string. Example: ```
+Authorization: Basic amRvZUBtYWlsaW5hdG9yLmNvbTpwYSQkdzByZA==```
+
 ### Operations
 
 The base url is `<host>/api/mock-contact-api` where `host` is the location where the Martini is deployed. By default, it's `localhost:8080`.
@@ -65,44 +76,38 @@ Returns a list of contacts
 ```
 curl -X GET \
   http://localhost:8080/api/mock-contact-api/contacts \
-  -H 'accept: application/json'
+  -H 'Accept: application/json' \
+  -H 'Authorization: Basic <base64-encoded-credentials-string>' \
 ```
 
 **Sample Response**
 
 If the request is successful, it will return an HTTP status code `200` with the response payload below:
 ```
-[
-    {
-        "firstName": "Jared",
-        "lastName": "Pilbeam",
-        "email": "jpilbeam0@prlog.org",
-        "phoneNumber": "+46 (963) 473-8538",
-        "id": 1
-    },
-    {
-        "firstName": "Inglis",
-        "lastName": "Kirkwood",
-        "email": "ikirkwood1@nytimes.com",
-        "phoneNumber": "+598 (876) 701-1420",
-        "id": 2
-    },
-    ...
-    {
-        "firstName": "Stanleigh",
-        "lastName": "O'Mannion",
-        "email": "somannionn@drupal.org",
-        "phoneNumber": "+7 (374) 438-6317",
-        "id": 24
-    },
-    {
-        "firstName": "Janene",
-        "lastName": "Maysor",
-        "email": "jmaysoro@techcrunch.com",
-        "phoneNumber": "+967 (520) 649-4447",
-        "id": 25
-    }
-]
+{
+    "result": "OK",
+    "message": "Successfully retrieved contacts",
+    "contacts": [
+        {
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "jdoe@mailinator.com",
+            "phoneNumber": "(538) 686-0011",
+            "dateCreated": 1605663588705,
+            "dateUpdated": 1605663588705,
+            "id": "7c29a7b7-e034-46b7-826f-526c6736061e"
+        },
+        {
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "email": "janed@mailinator.com",
+            "phoneNumber": "(538) 686-0011",
+            "dateCreated": 1605663588705,
+            "dateUpdated": 1605663588705,
+            "id": "c4417a7d-34e9-4d5f-846d-95f60d9e4766"
+        }
+    ]
+}
 ```
 
 `POST /contacts`
@@ -117,6 +122,7 @@ curl -X POST \
   http://localhost:8080/api/mock-contact-api/contacts \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
+  -H 'Authorization: Basic <base64-encoded-credentials-string>' \
   -d '{
     "firstName": "John",
     "lastName": "Doe",
@@ -137,7 +143,7 @@ If the request is successful, it will return an HTTP status code `200` with the 
         "lastName": "Doe",
         "email": "jdoe@mail.com",
         "phoneNumber": "(273) 721-4244",
-        "id": 26
+        "id": "7c29a7b7-e034-46b7-826f-526c6736061e"
     }
 }
 ```
@@ -151,8 +157,9 @@ Returns a single contact record that matches the given `contactId`
 **curl**
 ```
 curl -X GET \
-  http://localhost:8080/api/mock-contact-api/contacts/26 \
+  http://localhost:8080/api/mock-contact-api/contacts/7c29a7b7-e034-46b7-826f-526c6736061e \
   -H 'Accept: application/json'
+  -H 'Authorization: Basic <base64-encoded-credentials-string>' \
 ```
 
 **Sample Response**
@@ -160,11 +167,17 @@ curl -X GET \
 If the request is successful, it will return an HTTP status code `200` with the response payload below.
 ```
 {
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "jdoe@mail.com",
-    "phoneNumber": "(273) 721-4244",
-    "id": 26
+    "result": "OK",
+    "message": "Successfully added contact",
+    "contact": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "jdoe@mailinator.comt",
+        "phoneNumber": "(273) 721-4244",
+        "dateCreated": 1605663588705,
+        "dateUpdated": 1605663588705,
+        "id": "7c29a7b7-e034-46b7-826f-526c6736061e"
+    }
 }
 ```
 
@@ -180,6 +193,7 @@ curl -X PATCH \
   http://localhost:8080/api/mock-contact-api/contacts/26 \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
+  -H 'Authorization: Basic <base64-encoded-credentials-string>' \
   -d '{
     "email": "jdoe.updated@mail.com",
     "phoneNumber": "(538) 686-0011"
@@ -197,7 +211,8 @@ If the request is successful, it will return an HTTP status code of `200` with t
         "firstName": "John",
         "lastName": "Doe",
         "email": "jdoe.updated@mail.com",
-        "phoneNumber": "(538) 686-0011"
+        "phoneNumber": "(538) 686-0011",
+        "id": "7c29a7b7-e034-46b7-826f-526c6736061e"
     }
 }
 ```
@@ -213,6 +228,7 @@ Deletes a contact record that matches the `contactId`
 curl -X DELETE \
   http://localhost:8080/api/mock-contact-api/contacts/25 \
   -H 'Accept: application/json'
+  -H 'Authorization: Basic <base64-encoded-credentials-string>' \
 ```
 
 **Sample Response**

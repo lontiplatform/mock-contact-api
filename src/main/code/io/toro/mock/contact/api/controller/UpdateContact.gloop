@@ -36,6 +36,11 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "APIException",
+            "type": "model",
+            "reference": "io.toro.martini.api.APIException"
         }
     ],
     "steps": [
@@ -208,6 +213,16 @@
                                     ]
                                 },
                                 {
+                                    "from": [
+                                        "contactId"
+                                    ],
+                                    "to": [
+                                        "APIResponse",
+                                        "contact",
+                                        "id"
+                                    ]
+                                },
+                                {
                                     "type": "set",
                                     "expression": "SUCCESS",
                                     "to": [
@@ -222,16 +237,6 @@
                                     "to": [
                                         "APIResponse",
                                         "message"
-                                    ]
-                                },
-                                {
-                                    "from": [
-                                        "contactId"
-                                    ],
-                                    "to": [
-                                        "APIResponse",
-                                        "contact",
-                                        "id"
                                     ]
                                 }
                             ]
@@ -251,19 +256,26 @@
                         },
                         {
                             "type": "set",
+                            "expression": "Contact not found",
+                            "to": [
+                                "APIException",
+                                "message"
+                            ]
+                        },
+                        {
+                            "type": "set",
                             "expression": "ERROR",
                             "to": [
-                                "APIResponse",
+                                "APIException",
                                 "result"
                             ]
                         },
                         {
                             "type": "set",
-                            "expression": "\"Contact not found.\"",
-                            "evaluate": true,
+                            "expression": "404",
                             "to": [
-                                "APIResponse",
-                                "message"
+                                "APIException",
+                                "httpErrorCode"
                             ]
                         }
                     ]

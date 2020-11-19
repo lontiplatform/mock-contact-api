@@ -1,7 +1,13 @@
 {
+    "authTypes": [
+        "BASIC"
+    ],
+    "groups": [
+        "ESBAPIAdminGroup"
+    ],
     "info": {
         "title": "Mock Contact API",
-        "description": "This is a sample contacts server. This can be used for mocking or testing APIs.",
+        "description": "This is a sample contacts server. This can be used for mocking or testing APIs.\n\n### Sending Authenticated Requests\n\nYou can use your ECC account to send authenticated request to the API. Your ECC credentials must be sent in the `Authorization` header in the HTTP request\n\n#### To authenticate a request with basic authentication\n\n1. Combine your email and password with a colon (`:`). e.g. `jdoe@mailinator.com:pa$$w0rd`\n2. Encode the resulting string in Base64\n3. Include an Authorization header in the HTTP request containing the base64-encoded string. Example: ```\nAuthorization: Basic amRvZUBtYWlsaW5hdG9yLmNvbTpwYSQkdzByZA==```",
         "contact": {
             "name": "TORO Cloud",
             "url": "https://support.torocloud.com"
@@ -9,7 +15,7 @@
         "license": {
             "name": "MIT"
         },
-        "version": "1.0.0-SNAPSHOT"
+        "version": "1.0.0"
     },
     "basePath": "/mock-contact-api",
     "paths": {
@@ -20,15 +26,19 @@
                     "Contact"
                 ],
                 "summary": "Returns a list of all contacts stored in the database",
-                "description": "### Get Contacts\nThis endpoint will retrieve all contacts in the mock contact API",
+                "description": "This endpoint will retrieve all contacts in the mock contact API",
                 "produces": [
                     "application/json",
                     "application/xml"
                 ],
                 "responses": {
                     "200": {
-                        "body": "contacts",
-                        "description": "List of all contacts"
+                        "body": "APIResponse",
+                        "description": "List of all contacts",
+                        "responseBodyMockData": {
+                            "mockDataType": "JSON",
+                            "mockData": "{\n    \"result\": \"SUCCESS\",\n    \"message\": \"Successfully retrieved contacts\",\n    \"contacts\": [\n        {\n            \"firstName\": \"John\",\n            \"lastName\": \"Doe\",\n            \"email\": \"jdoe@mailinator.com\",\n            \"phoneNumber\": \"(538) 686-0011\",\n            \"dateCreated\": 1605663588705,\n            \"dateUpdated\": 1605663588705,\n            \"id\": \"7c29a7b7-e034-46b7-826f-526c6736061e\"\n        },\n        {\n            \"firstName\": \"Jane\",\n            \"lastName\": \"Doe\",\n            \"email\": \"janed@mailinator.com\",\n            \"phoneNumber\": \"(538) 686-0011\",\n            \"dateCreated\": 1605663588705,\n            \"dateUpdated\": 1605663588705,\n            \"id\": \"c4417a7d-34e9-4d5f-846d-95f60d9e4766\"\n        }\n    ]\n}"
+                        }
                     }
                 },
                 "operationType": "gloop",
@@ -40,7 +50,7 @@
                     "Contact"
                 ],
                 "summary": "Adds a contact to the database",
-                "description": "### Add Contact\nThis endpoint will add a contact in the mock contact API",
+                "description": "This endpoint will add a contact in the mock contact API",
                 "consumes": [
                     "application/json",
                     "application/xml"
@@ -56,7 +66,11 @@
                 "responses": {
                     "201": {
                         "body": "APIResponse",
-                        "description": "Message returned when a contact is successfully added"
+                        "description": "Message returned when a contact is successfully added",
+                        "responseBodyMockData": {
+                            "mockDataType": "JSON",
+                            "mockData": "{\n    \"result\": \"OK\",\n    \"message\": \"Successfully added contact\",\n    \"contact\": {\n        \"firstName\": \"John\",\n        \"lastName\": \"Doe\",\n        \"email\": \"jdoe@mailinator.comt\",\n        \"phoneNumber\": \"(273) 721-4244\",\n        \"id\": \"7c29a7b7-e034-46b7-826f-526c6736061e\"\n    }\n}"
+                        }
                     }
                 },
                 "operationType": "gloop",
@@ -71,7 +85,7 @@
                     "Contact"
                 ],
                 "summary": "Returns a single contact",
-                "description": "### Get Contact\nThis endpoint will retrieve a contact in the mock contact API",
+                "description": "This endpoint will retrieve a contact in the mock contact API",
                 "produces": [
                     "application/json",
                     "application/xml"
@@ -85,12 +99,20 @@
                 ],
                 "responses": {
                     "200": {
-                        "body": "contact",
-                        "description": "Represents a contact"
+                        "body": "APIResponse",
+                        "description": "Represents a contact",
+                        "responseBodyMockData": {
+                            "mockDataType": "JSON",
+                            "mockData": "{\n    \"result\": \"OK\",\n    \"message\": \"Successfully added contact\",\n    \"contact\": {\n        \"firstName\": \"John\",\n        \"lastName\": \"Doe\",\n        \"email\": \"jdoe@mailinator.comt\",\n        \"phoneNumber\": \"(273) 721-4244\",\n        \"dateCreated\": 1605663588705,\n        \"dateUpdated\": 1605663588705,\n        \"id\": \"7c29a7b7-e034-46b7-826f-526c6736061e\"\n    }\n}"
+                        }
                     },
                     "404": {
-                        "body": "APIResponse",
-                        "description": "Message returned when a contact requested is not existing"
+                        "body": "APIException",
+                        "description": "Message returned when a contact requested is not existing",
+                        "responseBodyMockData": {
+                            "mockDataType": "JSON",
+                            "mockData": "{\n    \"result\": \"ERROR\",\n    \"httpErrorCode\": 404,\n    \"message\": \"Contact not found.\"\n}"
+                        }
                     }
                 },
                 "operationType": "gloop",
@@ -117,11 +139,19 @@
                 "responses": {
                     "200": {
                         "body": "APIResponse",
-                        "description": "Message returned when a contact is successfully deleted"
+                        "description": "Message returned when a contact is successfully deleted",
+                        "responseBodyMockData": {
+                            "mockDataType": "JSON",
+                            "mockData": "{\n    \"result\": \"SUCCESS\",\n    \"message\": \"Successfully deleted contact.\"\n}"
+                        }
                     },
                     "404": {
-                        "body": "APIResponse",
-                        "description": "Message returned when a contact requested is not existing"
+                        "body": "APIException",
+                        "description": "Message returned when a contact requested is not existing",
+                        "responseBodyMockData": {
+                            "mockDataType": "JSON",
+                            "mockData": "{\n    \"result\": \"ERROR\",\n    \"httpErrorCode\": 404,\n    \"message\": \"Contact not found.\"\n}"
+                        }
                     }
                 },
                 "operationType": "gloop",
@@ -133,7 +163,7 @@
                     "Contact"
                 ],
                 "summary": "Updates a single contact",
-                "description": "### Update Contact\nThis endpoint will update a contact in the mock contact API",
+                "description": "This endpoint will update a contact in the mock contact API",
                 "consumes": [
                     "application/json",
                     "application/xml"
@@ -156,11 +186,19 @@
                 "responses": {
                     "200": {
                         "body": "APIResponse",
-                        "description": "The updated contact values"
+                        "description": "The updated contact values",
+                        "responseBodyMockData": {
+                            "mockDataType": "JSON",
+                            "mockData": "{\n    \"result\": \"OK\",\n    \"message\": \"Successfully updated contact\",\n    \"contact\": {\n        \"firstName\": \"John\",\n        \"lastName\": \"Updated\",\n        \"email\": \"jdoe@mailinator.comt\",\n        \"phoneNumber\": \"(273) 721-4244\",\n        \"id\": \"7c29a7b7-e034-46b7-826f-526c6736061e\"\n    }\n}"
+                        }
                     },
                     "404": {
-                        "body": "APIResponse",
-                        "description": "Message returned when a contact requested is not existing"
+                        "body": "APIException",
+                        "description": "Message returned when a contact requested is not existing",
+                        "responseBodyMockData": {
+                            "mockDataType": "JSON",
+                            "mockData": "{\n    \"result\": \"ERROR\",\n    \"httpErrorCode\": 404,\n    \"message\": \"Contact not found.\"\n}"
+                        }
                     }
                 },
                 "operationType": "gloop",
@@ -174,9 +212,12 @@
             "name": "Contact",
             "description": "The APIs for managing contacts.",
             "externalDocumentation": {
-                "url": "https://docs.torocloud.com/",
-                "description": "The documentation site of Martini."
+                "url": "https://github.com/torocloud/mock-contact-api/blob/master/README.md",
+                "description": "Github repository"
             }
         }
-    ]
+    ],
+    "externalDocumentation": {
+        "url": "https://github.com/torocloud/mock-contact-api/blob/master/README.md"
+    }
 }

@@ -17,6 +17,11 @@
             "name": "APIResponse",
             "type": "model",
             "reference": "io.toro.mock.contact.model.APIResponse"
+        },
+        {
+            "name": "APIException",
+            "type": "model",
+            "reference": "io.toro.martini.api.APIException"
         }
     ],
     "steps": [
@@ -99,6 +104,13 @@
                                         "APIResponse",
                                         "message"
                                     ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "200",
+                                    "to": [
+                                        "responseCode"
+                                    ]
                                 }
                             ]
                         }
@@ -119,16 +131,23 @@
                             "type": "set",
                             "expression": "ERROR",
                             "to": [
-                                "APIResponse",
+                                "APIException",
                                 "result"
                             ]
                         },
                         {
                             "type": "set",
-                            "expression": "\"Contact not found.\"",
-                            "evaluate": true,
+                            "expression": "404",
                             "to": [
-                                "APIResponse",
+                                "APIException",
+                                "httpErrorCode"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "Contact not found.",
+                            "to": [
+                                "APIException",
                                 "message"
                             ]
                         }

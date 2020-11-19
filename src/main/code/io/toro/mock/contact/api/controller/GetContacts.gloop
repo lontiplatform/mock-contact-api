@@ -2,25 +2,6 @@
     "comments": "This service retrieves all contacts.",
     "output": [
         {
-            "name": "contacts",
-            "type": "model",
-            "array": true,
-            "reference": "io.toro.mock.contact.model.Contact",
-            "gloopProperties": [
-                {
-                    "name": "id"
-                },
-                {
-                    "name": "dateCreated",
-                    "type": "long"
-                },
-                {
-                    "name": "dateUpdated",
-                    "type": "long"
-                }
-            ]
-        },
-        {
             "name": "responseCode",
             "type": "integer",
             "defaultValue": 200
@@ -28,7 +9,28 @@
         {
             "name": "APIResponse",
             "type": "model",
-            "reference": "io.toro.mock.contact.model.APIResponse"
+            "reference": "io.toro.mock.contact.model.APIResponse",
+            "gloopProperties": [
+                {
+                    "name": "contacts",
+                    "type": "model",
+                    "array": true,
+                    "reference": "io.toro.mock.contact.model.Contact",
+                    "gloopProperties": [
+                        {
+                            "name": "id"
+                        },
+                        {
+                            "name": "dateCreated",
+                            "type": "long"
+                        },
+                        {
+                            "name": "dateUpdated",
+                            "type": "long"
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "steps": [
@@ -94,6 +96,22 @@
                     "to": [
                         "inputCursor"
                     ]
+                },
+                {
+                    "type": "set",
+                    "expression": "SUCCESS",
+                    "to": [
+                        "APIResponse",
+                        "result"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Successfully retrieved contacts",
+                    "to": [
+                        "APIResponse",
+                        "message"
+                    ]
                 }
             ]
         },
@@ -107,6 +125,7 @@
             },
             "output": {
                 "path": [
+                    "APIResponse",
                     "contacts"
                 ]
             },
@@ -120,6 +139,7 @@
                                 "FIRST_NAME"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contacts",
                                 "firstName"
                             ]
@@ -130,6 +150,7 @@
                                 "LAST_NAME"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contacts",
                                 "lastName"
                             ]
@@ -140,6 +161,7 @@
                                 "EMAIL"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contacts",
                                 "email"
                             ]
@@ -150,6 +172,7 @@
                                 "PHONE_NUMBER"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contacts",
                                 "phoneNumber"
                             ]
@@ -160,6 +183,7 @@
                                 "ID"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contacts",
                                 "id"
                             ]
@@ -170,6 +194,7 @@
                                 "DATE_CREATED"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contacts",
                                 "dateCreated"
                             ]
@@ -180,6 +205,7 @@
                                 "DATE_UPDATED"
                             ],
                             "to": [
+                                "APIResponse",
                                 "contacts",
                                 "dateUpdated"
                             ]
