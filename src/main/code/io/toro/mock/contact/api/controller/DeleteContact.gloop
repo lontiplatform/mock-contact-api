@@ -14,12 +14,12 @@
             "defaultValue": 200
         },
         {
-            "name": "APIResponse",
+            "name": "response",
             "type": "model",
             "reference": "io.toro.mock.contact.model.APIResponse"
         },
         {
-            "name": "APIException",
+            "name": "exception",
             "type": "model",
             "reference": "io.toro.martini.api.APIException"
         }
@@ -90,26 +90,25 @@
                             "lines": [
                                 {
                                     "type": "set",
+                                    "expression": "200",
+                                    "to": [
+                                        "responseCode"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
                                     "expression": "SUCCESS",
                                     "to": [
-                                        "APIResponse",
+                                        "response",
                                         "result"
                                     ]
                                 },
                                 {
                                     "type": "set",
-                                    "expression": "\"Successfully deleted contact.\"",
-                                    "evaluate": true,
+                                    "expression": "Successfully deleted contact.",
                                     "to": [
-                                        "APIResponse",
+                                        "response",
                                         "message"
-                                    ]
-                                },
-                                {
-                                    "type": "set",
-                                    "expression": "200",
-                                    "to": [
-                                        "responseCode"
                                     ]
                                 }
                             ]
@@ -131,7 +130,7 @@
                             "type": "set",
                             "expression": "ERROR",
                             "to": [
-                                "APIException",
+                                "exception",
                                 "result"
                             ]
                         },
@@ -139,7 +138,7 @@
                             "type": "set",
                             "expression": "404",
                             "to": [
-                                "APIException",
+                                "exception",
                                 "httpErrorCode"
                             ]
                         },
@@ -147,7 +146,7 @@
                             "type": "set",
                             "expression": "Contact not found.",
                             "to": [
-                                "APIException",
+                                "exception",
                                 "message"
                             ]
                         }

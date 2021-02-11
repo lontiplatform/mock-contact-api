@@ -11,12 +11,7 @@
     ],
     "output": [
         {
-            "name": "responseCode",
-            "type": "integer",
-            "defaultValue": 201
-        },
-        {
-            "name": "APIResponse",
+            "name": "response",
             "type": "model",
             "reference": "io.toro.mock.contact.model.APIResponse",
             "gloopProperties": [
@@ -32,6 +27,11 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "responseCode",
+            "type": "integer",
+            "defaultValue": 201
         }
     ],
     "steps": [
@@ -106,20 +106,20 @@
                             ]
                         },
                         {
-                            "type": "set",
-                            "expression": "true",
-                            "to": [
-                                "addContactInput",
-                                "$getGeneratedKeys"
-                            ]
-                        },
-                        {
                             "from": [
                                 "id"
                             ],
                             "to": [
                                 "addContactInput",
                                 "id"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "true",
+                            "to": [
+                                "addContactInput",
+                                "$getGeneratedKeys"
                             ]
                         }
                     ]
@@ -132,25 +132,8 @@
                                 "contact"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contact"
-                            ]
-                        },
-                        {
-                            "type": "set",
-                            "expression": "SUCCESS",
-                            "to": [
-                                "APIResponse",
-                                "result"
-                            ]
-                        },
-                        {
-                            "type": "set",
-                            "expression": "\"Successfully added contact.\"",
-                            "evaluate": true,
-                            "to": [
-                                "APIResponse",
-                                "message"
                             ]
                         },
                         {
@@ -158,11 +141,27 @@
                                 "id"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contact",
                                 "id"
                             ],
                             "priority": 1
+                        },
+                        {
+                            "type": "set",
+                            "expression": "\"Successfully added contact.\"",
+                            "to": [
+                                "response",
+                                "message"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "SUCCESS",
+                            "to": [
+                                "response",
+                                "result"
+                            ]
                         }
                     ]
                 }

@@ -21,7 +21,7 @@
             "defaultValue": 200
         },
         {
-            "name": "APIResponse",
+            "name": "response",
             "type": "model",
             "reference": "io.toro.mock.contact.model.APIResponse",
             "gloopProperties": [
@@ -38,7 +38,7 @@
             ]
         },
         {
-            "name": "APIException",
+            "name": "exception",
             "type": "model",
             "reference": "io.toro.martini.api.APIException"
         }
@@ -208,8 +208,24 @@
                                         "contact"
                                     ],
                                     "to": [
-                                        "APIResponse",
+                                        "response",
                                         "contact"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "SUCCESS",
+                                    "to": [
+                                        "response",
+                                        "result"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "Successfully updated contact.",
+                                    "to": [
+                                        "response",
+                                        "message"
                                     ]
                                 },
                                 {
@@ -217,27 +233,11 @@
                                         "contactId"
                                     ],
                                     "to": [
-                                        "APIResponse",
+                                        "response",
                                         "contact",
                                         "id"
-                                    ]
-                                },
-                                {
-                                    "type": "set",
-                                    "expression": "SUCCESS",
-                                    "to": [
-                                        "APIResponse",
-                                        "result"
-                                    ]
-                                },
-                                {
-                                    "type": "set",
-                                    "expression": "\"Successfully updated contact.\"",
-                                    "evaluate": true,
-                                    "to": [
-                                        "APIResponse",
-                                        "message"
-                                    ]
+                                    ],
+                                    "priority": 1
                                 }
                             ]
                         }
@@ -256,17 +256,9 @@
                         },
                         {
                             "type": "set",
-                            "expression": "Contact not found",
-                            "to": [
-                                "APIException",
-                                "message"
-                            ]
-                        },
-                        {
-                            "type": "set",
                             "expression": "ERROR",
                             "to": [
-                                "APIException",
+                                "exception",
                                 "result"
                             ]
                         },
@@ -274,8 +266,16 @@
                             "type": "set",
                             "expression": "404",
                             "to": [
-                                "APIException",
+                                "exception",
                                 "httpErrorCode"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "Contact not found.",
+                            "to": [
+                                "exception",
+                                "message"
                             ]
                         }
                     ]

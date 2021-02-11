@@ -7,7 +7,7 @@
             "defaultValue": 200
         },
         {
-            "name": "APIResponse",
+            "name": "response",
             "type": "model",
             "reference": "io.toro.mock.contact.model.APIResponse",
             "gloopProperties": [
@@ -101,15 +101,15 @@
                     "type": "set",
                     "expression": "SUCCESS",
                     "to": [
-                        "APIResponse",
+                        "response",
                         "result"
                     ]
                 },
                 {
                     "type": "set",
-                    "expression": "Successfully retrieved contacts",
+                    "expression": "Successfully retrieved contacts.",
                     "to": [
-                        "APIResponse",
+                        "response",
                         "message"
                     ]
                 }
@@ -125,7 +125,7 @@
             },
             "output": {
                 "path": [
-                    "APIResponse",
+                    "response",
                     "contacts"
                 ]
             },
@@ -136,34 +136,12 @@
                         {
                             "from": [
                                 "inputCursor",
-                                "FIRST_NAME"
+                                "ID"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contacts",
-                                "firstName"
-                            ]
-                        },
-                        {
-                            "from": [
-                                "inputCursor",
-                                "LAST_NAME"
-                            ],
-                            "to": [
-                                "APIResponse",
-                                "contacts",
-                                "lastName"
-                            ]
-                        },
-                        {
-                            "from": [
-                                "inputCursor",
-                                "EMAIL"
-                            ],
-                            "to": [
-                                "APIResponse",
-                                "contacts",
-                                "email"
+                                "id"
                             ]
                         },
                         {
@@ -172,20 +150,9 @@
                                 "PHONE_NUMBER"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contacts",
                                 "phoneNumber"
-                            ]
-                        },
-                        {
-                            "from": [
-                                "inputCursor",
-                                "ID"
-                            ],
-                            "to": [
-                                "APIResponse",
-                                "contacts",
-                                "id"
                             ]
                         },
                         {
@@ -194,7 +161,7 @@
                                 "DATE_CREATED"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contacts",
                                 "dateCreated"
                             ]
@@ -205,9 +172,42 @@
                                 "DATE_UPDATED"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contacts",
                                 "dateUpdated"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "inputCursor",
+                                "EMAIL"
+                            ],
+                            "to": [
+                                "response",
+                                "contacts",
+                                "email"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "inputCursor",
+                                "LAST_NAME"
+                            ],
+                            "to": [
+                                "response",
+                                "contacts",
+                                "lastName"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "inputCursor",
+                                "FIRST_NAME"
+                            ],
+                            "to": [
+                                "response",
+                                "contacts",
+                                "firstName"
                             ]
                         }
                     ]

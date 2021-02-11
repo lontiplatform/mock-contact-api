@@ -6,7 +6,7 @@
 
     <groupId>com.torocloud</groupId>
     <artifactId>mock-contact-api</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <name>Mock Contact API</name>
     <description>Builds a Martini package containing a mock contact API.</description>

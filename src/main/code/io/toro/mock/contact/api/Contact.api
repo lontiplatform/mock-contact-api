@@ -1,7 +1,4 @@
 {
-    "authTypes": [
-        "BASIC"
-    ],
     "groups": [
         "ESBAPIAdminGroup"
     ],
@@ -33,7 +30,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "body": "APIResponse",
+                        "body": "response",
                         "description": "List of all contacts",
                         "responseBodyMockData": {
                             "mockDataType": "JSON",
@@ -65,7 +62,7 @@
                 },
                 "responses": {
                     "201": {
-                        "body": "APIResponse",
+                        "body": "response",
                         "description": "Message returned when a contact is successfully added",
                         "responseBodyMockData": {
                             "mockDataType": "JSON",
@@ -99,7 +96,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "body": "APIResponse",
+                        "body": "response",
                         "description": "Represents a contact",
                         "responseBodyMockData": {
                             "mockDataType": "JSON",
@@ -107,7 +104,7 @@
                         }
                     },
                     "404": {
-                        "body": "APIException",
+                        "body": "exception",
                         "description": "Message returned when a contact requested is not existing",
                         "responseBodyMockData": {
                             "mockDataType": "JSON",
@@ -138,7 +135,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "body": "APIResponse",
+                        "body": "response",
                         "description": "Message returned when a contact is successfully deleted",
                         "responseBodyMockData": {
                             "mockDataType": "JSON",
@@ -146,7 +143,7 @@
                         }
                     },
                     "404": {
-                        "body": "APIException",
+                        "body": "exception",
                         "description": "Message returned when a contact requested is not existing",
                         "responseBodyMockData": {
                             "mockDataType": "JSON",
@@ -185,7 +182,7 @@
                 },
                 "responses": {
                     "200": {
-                        "body": "APIResponse",
+                        "body": "response",
                         "description": "The updated contact values",
                         "responseBodyMockData": {
                             "mockDataType": "JSON",
@@ -193,7 +190,7 @@
                         }
                     },
                     "404": {
-                        "body": "APIException",
+                        "body": "exception",
                         "description": "Message returned when a contact requested is not existing",
                         "responseBodyMockData": {
                             "mockDataType": "JSON",

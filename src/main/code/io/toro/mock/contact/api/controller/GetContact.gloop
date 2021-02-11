@@ -14,7 +14,7 @@
             "defaultValue": 200
         },
         {
-            "name": "APIResponse",
+            "name": "response",
             "type": "model",
             "reference": "io.toro.mock.contact.model.APIResponse",
             "gloopProperties": [
@@ -39,7 +39,7 @@
             ]
         },
         {
-            "name": "APIException",
+            "name": "exception",
             "type": "model",
             "reference": "io.toro.martini.api.APIException"
         }
@@ -107,7 +107,7 @@
                                 "ID"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contact",
                                 "id"
                             ]
@@ -118,7 +118,7 @@
                                 "FIRST_NAME"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contact",
                                 "firstName"
                             ]
@@ -129,7 +129,7 @@
                                 "LAST_NAME"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contact",
                                 "lastName"
                             ]
@@ -140,7 +140,7 @@
                                 "EMAIL"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contact",
                                 "email"
                             ]
@@ -151,7 +151,7 @@
                                 "PHONE_NUMBER"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contact",
                                 "phoneNumber"
                             ]
@@ -162,7 +162,7 @@
                                 "DATE_CREATED"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contact",
                                 "dateCreated"
                             ]
@@ -173,7 +173,7 @@
                                 "DATE_UPDATED"
                             ],
                             "to": [
-                                "APIResponse",
+                                "response",
                                 "contact",
                                 "dateUpdated"
                             ]
@@ -195,7 +195,7 @@
                             "type": "set",
                             "expression": "ERROR",
                             "to": [
-                                "APIException",
+                                "exception",
                                 "result"
                             ]
                         },
@@ -203,7 +203,7 @@
                             "type": "set",
                             "expression": "404",
                             "to": [
-                                "APIException",
+                                "exception",
                                 "httpErrorCode"
                             ]
                         },
@@ -211,7 +211,7 @@
                             "type": "set",
                             "expression": "Contact not found.",
                             "to": [
-                                "APIException",
+                                "exception",
                                 "message"
                             ]
                         }
